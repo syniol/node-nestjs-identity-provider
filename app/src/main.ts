@@ -8,6 +8,7 @@ import { ValidationPipe } from './libs/validation'
 (async () => {
   const app = await NestFactory.create(AppModule)
   app.use(helmet())
+  app.enableShutdownHooks();
 
   /**
    * This is to avoid having to import and instantiate ValidationPipe in each rout
