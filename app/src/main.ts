@@ -4,6 +4,7 @@ import helmet from 'helmet'
 
 import { AppModule } from './app.module'
 import { ValidationPipe } from './libs/validation'
+import { isProductionEnv } from './libs/env'
 
 
 (async () => {
@@ -15,11 +16,14 @@ import { ValidationPipe } from './libs/validation'
     context: 'identity-provider-service',
   }))
   app.enableCors({
-    'origin': process.env.NODE_ENV === 'production'
+    'origin': isProductionEnv()
       ? process.env.PROXY_URL
       : '*'
   })
-  app.enableShutdownHooks();
+
+  if (isProductionEnv()) {
+    app.getHttpAdapter().getInstance().set('trust proxy', true);
+  }
 
   /**
    * This is to avoid having to import and instantiate ValidationPipe in each rout
