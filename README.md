@@ -27,6 +27,68 @@ import all APIs and connections for __Postgres__ and __Redis__. However, you cou
 import `CacheModule` or `DatabaseModule` individually.
 
 
+### Structure
+Diagram below shows root structure of the project.
+
+```mermaid
+graph LR
+    A[node-nestjs-identity-provider];
+    A --> A1[app];
+    A ---> A2[docker];
+    A --> A3[Makefile]; 
+    A1 --> B[bin];
+    A1 --> S[src]
+    A1 --> T[test - Int & E2E Tests]
+
+    B --> B1([key.js]);
+
+    A2 ---> C1[dev];
+    A2 ---> C2[prod];
+
+    C1 --> D1([docker-compose.yml])
+    C2 --> D2([docker-compose.yml])
+
+    C1 --> DD1[node]
+    C1 --> DD2[postgres]
+    C1 --> DD3[redis]
+
+    DD1 --> DDD1[Dockerfile]
+    DD2 --> DDD2[Dockerfile]
+    DD3 --> DDD3[Dockerfile]
+    
+    C2 --> DP1[node]
+    C2 --> DP2[postgres]
+    C2 --> DP3[nginx]
+    C2 --> DP4[redis]
+    C2 --> DP5[knex]
+
+    DP1 --> DPD1[Dockerfile]
+    DP2 --> DPD2[Dockerfile]
+    DP3 --> DPD3[Dockerfile]
+    DP4 --> DPD4[Dockerfile]
+    DP5 --> DPD5[Dockerfile]
+
+    S --> S1([main.ts - NestJS Bootstrap])
+```
+In this diagram you can see the structure of NestJS application and the modules
+```mermaid
+graph LR
+    NestJS[src];
+    NestJS --> auth
+    NestJS --> user
+    NestJS --> crypto
+    NestJS --> infrastructure
+    NestJS --> health
+
+    auth --> adto[dto]
+    crypto --> cdto[dto]
+    health --> hdto[dto]
+
+    infrastructure --> cache
+    infrastructure --> db
+```
+
+
 ## Production Deployment
 You need to have a docker installation on the host machine (VPS, Dedicated Server, 
 Cloud Private Computing). For an Ubuntu distros you can run `docker.sh` at the 
@@ -80,12 +142,22 @@ inside the NGINX docker image located at: `docker/prod/nginx/`
 > You could also ignore SSL configuration step and always serve on port 80 (http)
 
 
-## Encryption Key
+### Secret Manager
+You should populate create and populate `docker/prod/.env` from given template `docker/prod/.env.dist`. 
+You could use any secret manager you have in your toolbox. This repository doesn't enforce or opinionated 
+for your operation toolkit.
+
+#### Encryption Key
 There is a CLI node.js application located at: `app/bin/key.js` that creates a secret key
 could be utilised to decrypt and encryption of passwords. Environment variable
 `CRYPTO_SECRET_KEY` is populated via host or `.env` file at the root of docker files. This 
 will differ for each environment. You could generate a new shared key and modify the exiting 
 key located at: `docker/prod/.env`.
+
+#### Database Credential <sup>Zero Trust Security</sup>
+Postgres database is not exposed outside of private network for zero trust security. However, 
+in order to access the database within the secure network and container you need to define a 
+password inside `docker/prod/.env` via your chosen secret manager `POSTGRES_PASSWORD`.
 
 
 ### Up and Running with Docker
@@ -144,16 +216,6 @@ npx knex seed:make <seed_name> -x ts
 npx knex seed:run
 ```
 
-
-## Initial Skeleton Build
-In order to create a new skeleton application, I ran the following inside the node.js docker container.
-
-```bash
-nest new app
-```
-It creates a new folder named `app` with all example files and an endpoint `/` with `GET` method for Hello World message.
-
-
 ## Data Transfer Objects (DTO) Validation
 In order to validate the incoming requests we use Zod and its extension for NestJS. Please [read more here](https://www.npmjs.com/package/nestjs-zod).
 
@@ -164,4 +226,4 @@ npm i nestjs-zod zod
 
 ### Credits
 <small>Author: [Hadi Tajallaei](mailto:hadi@syniol.com)</small>
-<p><small>Copyright &copy; 2025 Syniol Limited. All rights reserved.</small></p>
+<p><small>Copyright &copy; 2026 Syniol Limited. All rights reserved.</small></p>
