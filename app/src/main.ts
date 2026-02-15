@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core'
+import { ConsoleLogger } from '@nestjs/common'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
 import { ValidationPipe } from './libs/validation'
-import { ConsoleLogger } from '@nestjs/common'
 
 
 (async () => {
@@ -14,10 +14,12 @@ import { ConsoleLogger } from '@nestjs/common'
     json: true,
     context: 'identity-provider-service',
   }))
-  app.enableCors({ 'origin': process.env.NODE_ENV === 'production'
+  app.enableCors({
+    'origin': process.env.NODE_ENV === 'production'
       ? process.env.PROXY_URL
       : '*'
   })
+  app.enableShutdownHooks();
 
   /**
    * This is to avoid having to import and instantiate ValidationPipe in each rout
