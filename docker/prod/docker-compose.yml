@@ -27,6 +27,8 @@ services:
     environment:
       NODE_ENV: production
       PORT: 8080
+      # This is a URL where NGINX is deployed
+      PROXY_URL: 'https://api-nest.syniol.com'
       POSTGRES_HOST: postgres
       POSTGRES_USER: root
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
