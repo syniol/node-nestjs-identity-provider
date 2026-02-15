@@ -14,6 +14,10 @@ import { ConsoleLogger } from '@nestjs/common'
     json: true,
     context: 'identity-provider-service',
   }))
+  app.enableCors({ 'origin': process.env.NODE_ENV === 'production'
+      ? process.env.PROXY_URL
+      : '*'
+  })
 
   /**
    * This is to avoid having to import and instantiate ValidationPipe in each rout

@@ -52,9 +52,9 @@ graph LR
     C1 --> DD2[postgres]
     C1 --> DD3[redis]
 
-    DD1 --> DDD1[Dockerfile]
-    DD2 --> DDD2[Dockerfile]
-    DD3 --> DDD3[Dockerfile]
+%%    DD1 --> DDD1[Dockerfile]
+%%    DD2 --> DDD2[Dockerfile]
+%%    DD3 --> DDD3[Dockerfile]
     
     C2 --> DP1[node]
     C2 --> DP2[postgres]
@@ -62,11 +62,11 @@ graph LR
     C2 --> DP4[redis]
     C2 --> DP5[knex]
 
-    DP1 --> DPD1[Dockerfile]
-    DP2 --> DPD2[Dockerfile]
-    DP3 --> DPD3[Dockerfile]
-    DP4 --> DPD4[Dockerfile]
-    DP5 --> DPD5[Dockerfile]
+%%    DP1 --> DPD1[Dockerfile]
+%%    DP2 --> DPD2[Dockerfile]
+%%    DP3 --> DPD3[Dockerfile]
+%%    DP4 --> DPD4[Dockerfile]
+%%    DP5 --> DPD5[Dockerfile]
 
     S --> S1([main.ts - NestJS Bootstrap])
 ```
