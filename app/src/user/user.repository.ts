@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { UserEntity } from './user.entity'
-import { CryptoEncryptedValue } from '../crypto/dto/crypto.dto'
 import { DatabaseService } from '../infrastructure/db/db.service'
+import { HashPassword } from '../crypto/dto/password.dto'
 
 @Injectable()
 export class UserRepository {
@@ -39,8 +39,8 @@ export class UserRepository {
   }
 
   public async updatePassword(
-    username,
-    updatedCredential: CryptoEncryptedValue,
+    username: string,
+    updatedCredential: HashPassword,
   ): Promise<UserEntity> {
     return this.databaseService.client
       .queryBuilder()

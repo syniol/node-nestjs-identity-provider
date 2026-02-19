@@ -1,13 +1,16 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common'
+
 import { UserRepository } from './user.repository'
 import { UserEntity } from './user.entity'
-import { CryptoService } from '../crypto/crypto.service'
+import { PasswordService } from '../crypto/password.service'
 
 @Injectable()
 export class UserService {
+  #logger = new Logger(UserService.name)
+
   public constructor(
     private readonly userRepository: UserRepository,
-    private readonly cryptoService: CryptoService,
+    private readonly passwordService: PasswordService,
   ) {}
 
   public async handleUsernameLookup(username: string): Promise<UserEntity> {
@@ -18,30 +21,42 @@ export class UserService {
     userEntity: UserEntity,
     plainPassword: string,
   ): Promise<boolean> {
-    return (
-      (await this.cryptoService.decrypt(userEntity.credential)) ===
-      plainPassword
-    )
+    try {
+      return await this.passwordService.isPasswordCorrect(
+        userEntity.credential,
+        plainPassword,
+      )
+    } catch (error) {
+      this.#logger.error(
+        error,
+        `error verifying user credential for: ${userEntity.username}`,
+      )
+
+      throw new UnauthorizedException('error verifying user credential')
+    }
   }
 
   public async handleUserCreation(
-    username,
+    username: string,
     password: string,
     scopes: string[],
-  ) {
+  ): Promise<void> {
     await this.userRepository.persist(
       new UserEntity(
         username,
-        await this.cryptoService.encrypt(password),
+        await this.passwordService.hashPassword(password),
         scopes,
       ),
     )
   }
 
-  public async handleUserPasswordChange(username, password: string) {
+  public async handleUserPasswordChange(
+    username: string,
+    password: string,
+  ): Promise<void> {
     await this.userRepository.updatePassword(
       username,
-      await this.cryptoService.encrypt(password),
+      await this.passwordService.hashPassword(password),
     )
   }
 }
