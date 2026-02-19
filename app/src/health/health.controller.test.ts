@@ -18,6 +18,7 @@ describe('AppController', () => {
     it('should return health true', () => {
       expect(appController.getHealth()).toEqual({
         healthy: true,
+        uptime: expect.any(Number),
       })
     })
   })
