@@ -1,4 +1,4 @@
-import { randomBytes, createCipheriv, createDecipheriv } from 'node:crypto'
+import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
 import { Injectable } from '@nestjs/common'
 import { CryptoDecryptedValue, CryptoEncryptedValue } from './dto/crypto.dto'
 
@@ -38,8 +38,8 @@ export class CryptoService {
   }
 
   private async encryptPlaintextWithSharedSecretKey(
-    text,
-    secretKey,
+    text: string,
+    secretKey: string,
   ): Promise<CryptoEncryptedValue> {
     const iv = randomBytes(CryptoService.EncryptionDefaultByteSize)
     const cipher = createCipheriv(
