@@ -20,8 +20,13 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/healthz')
       .expect(HttpStatus.OK)
-      .expect({
-        healthy: true,
+      .expect((resp) => {
+        expect(resp.body).toEqual(
+          expect.objectContaining({
+            healthy: true,
+            uptime: expect.any(Number),
+          }),
+        )
       })
   })
 })
