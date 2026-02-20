@@ -17,7 +17,7 @@ export class HealthController {
   public getHealth(): HealthResponse {
     return {
       healthy: true,
-      uptime: uptime() / 3600 / 60 / 24,
+      uptime: parseFloat((uptime() / 3600 / 60).toFixed(2)),
     }
   }
 }

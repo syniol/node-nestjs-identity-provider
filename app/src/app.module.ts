@@ -18,8 +18,8 @@ import { InfrastructureModule } from './infrastructure/infrastructure.module'
       {
         ttl: 60000,
         limit: 10,
-      }
-    ])
+      },
+    ]),
   ],
 })
 export class AppModule {}

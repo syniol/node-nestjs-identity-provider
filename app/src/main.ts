@@ -16,42 +16,42 @@ const logger = new ConsoleLogger({
 
 if (cluster.isPrimary) {
   const availableCpus = cpus()
-  logger.log(`Clustering is available to: ${availableCpus.length} Processing Unit.`)
+  logger.log(
+    `Clustering is available to: ${availableCpus.length} Processing Unit.`,
+  )
 
   for (let i = 1; i < availableCpus.length; i++) {
     cluster.fork()
-    logger.log(`Cluster ${i} is forked`);
+    logger.log(`Cluster ${i} is forked`)
   }
 
   cluster.on('exit', (worker, code, signal) => {
     if (code !== 0 && !worker.exitedAfterDisconnect) {
-      logger.log(
-        `Worker with process ID: "${worker.process.pid}" has crashed.`,
-      );
+      logger.log(`Worker with process ID: "${worker.process.pid}" has crashed.`)
 
-      logger.log('Starting a new worker');
-      cluster.fork();
+      logger.log('Starting a new worker')
+      cluster.fork()
     }
-  });
+  })
 }
 
 if (cluster.isWorker) {
-  (async () => {
+  ;(async () => {
     const app = await NestFactory.create(AppModule)
     app.use(helmet())
-    app.enableShutdownHooks();
-    app.useLogger(new ConsoleLogger({
-      json: true,
-      context: 'identity-provider-service',
-    }))
+    app.enableShutdownHooks()
+    app.useLogger(
+      new ConsoleLogger({
+        json: true,
+        context: 'identity-provider-service',
+      }),
+    )
     app.enableCors({
-      'origin': isProductionEnv()
-        ? process.env.PROXY_URL
-        : '*'
+      origin: isProductionEnv() ? process.env.PROXY_URL : '*',
     })
 
     if (isProductionEnv()) {
-      app.getHttpAdapter().getInstance().set('trust proxy', true);
+      app.getHttpAdapter().getInstance().set('trust proxy', true)
     }
 
     /**
@@ -61,10 +61,7 @@ if (cluster.isWorker) {
     app.useGlobalPipes(new ValidationPipe())
 
     await app.listen(process.env.PORT ?? 3000, () => {
-      logger.log(
-        `Started Server at processing unit: ${process.pid}.`,
-      )
+      logger.log(`Started Server at processing unit: ${process.pid}.`)
     })
   })()
 }
-
