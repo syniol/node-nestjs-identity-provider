@@ -1,0 +1,123 @@
+openapi: 3.0.0
+paths:
+  /healthz:
+    get:
+      operationId: HealthController_getHealth
+      parameters: []
+      responses:
+        '200':
+          description: provides a status of software and infrastructure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+      tags:
+        - Health
+  /auth/token:
+    post:
+      operationId: AuthController_token
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequestDTO'
+      responses:
+        '200':
+          description: Authenticates and returns client token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokenResponse'
+      tags:
+        - Auth
+  /user:
+    post:
+      operationId: UserController_createUser
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - User
+  /user/{username}:
+    delete:
+      operationId: UserController_removeUser
+      parameters: []
+      responses:
+        '202':
+          description: ''
+      tags:
+        - User
+  /user/{username}/password:
+    patch:
+      operationId: UserController_changePassword
+      parameters:
+        - name: username
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '202':
+          description: ''
+      tags:
+        - User
+info:
+  title: Node Identity Provider API
+  description: ''
+  version: '1.0'
+  contact: {}
+tags:
+  - name: nodejs
+    description: ''
+  - name: oauth2.1
+    description: ''
+  - name: password_grant
+    description: ''
+servers:
+  - url: http://localhost
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        healthy:
+          type: boolean
+          description: indicates the health of system
+        uptime:
+          type: number
+          description: uptime of the service in hours
+      required:
+        - healthy
+        - uptime
+    AuthTokenRequestDTO:
+      type: object
+      properties: {}
+    AuthTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: Access token created and stored for authenticating users
+          format: base64
+        token_type:
+          type: string
+          description: Bearer Access token type
+        expires_in:
+          type: number
+          description: expiry time in seconds
+        refresh_token:
+          type: string
+          description: token to generate a new access token without re-authentication
+          format: base64
+        scope:
+          type: string
+          description: Access scope for authentication token
+      required:
+        - access_token
+        - token_type
+        - expires_in
+        - refresh_token
+        - scope

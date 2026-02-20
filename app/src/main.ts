@@ -68,9 +68,14 @@ if (cluster.isWorker) {
         .addTag('nodejs')
         .addTag('oauth2.1')
         .addTag('password_grant')
+        .addServer('http://localhost')
         .build()
       const documentFactory = () => SwaggerModule.createDocument(app, config)
       SwaggerModule.setup('api', app, documentFactory)
+      SwaggerModule.setup('swagger', app, documentFactory, {
+        jsonDocumentUrl: 'swagger/json',
+        yamlDocumentUrl: 'swagger/yaml',
+      })
     }
 
     await app.listen(process.env.PORT ?? 3000, () => {
