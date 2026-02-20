@@ -3,6 +3,7 @@ import { cpus } from 'node:os'
 
 import { NestFactory } from '@nestjs/core'
 import { ConsoleLogger } from '@nestjs/common'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
@@ -38,7 +39,6 @@ if (cluster.isPrimary) {
 if (cluster.isWorker) {
   ;(async () => {
     const app = await NestFactory.create(AppModule)
-    app.use(helmet())
     app.enableShutdownHooks()
     app.useLogger(
       new ConsoleLogger({
@@ -51,6 +51,7 @@ if (cluster.isWorker) {
     })
 
     if (isProductionEnv()) {
+      app.use(helmet())
       app.getHttpAdapter().getInstance().set('trust proxy', true)
     }
 
@@ -59,6 +60,18 @@ if (cluster.isWorker) {
      * e.g. @Body(new ValidationPipe(AuthTokenRequestDTO)) request: AuthTokenRequestDTO
      */
     app.useGlobalPipes(new ValidationPipe())
+
+    if (!isProductionEnv()) {
+      const config = new DocumentBuilder()
+        .setTitle('Node Identity Provider API')
+        .setVersion('1.0')
+        .addTag('nodejs')
+        .addTag('oauth2.1')
+        .addTag('password_grant')
+        .build()
+      const documentFactory = () => SwaggerModule.createDocument(app, config)
+      SwaggerModule.setup('api', app, documentFactory)
+    }
 
     await app.listen(process.env.PORT ?? 3000, () => {
       logger.log(`Started Server at processing unit: ${process.pid}.`)
