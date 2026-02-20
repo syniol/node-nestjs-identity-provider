@@ -7,7 +7,7 @@
   "license": "SEE LICENSE IN ../LICENSE",
   "scripts": {
     "build": "nest build",
-    "build:docs": "curl -o ./../openapi.yml http://127.0.0.1/swagger/yaml",
+    "build:docs": "curl -o ./../docs/openapi.yml http://127.0.0.1/swagger/yaml",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
