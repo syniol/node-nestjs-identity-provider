@@ -8,7 +8,7 @@ export class HealthResponse {
   public healthy: boolean
 
   @ApiProperty({
-    description: 'uptime of the service in days',
+    description: 'uptime of the service in hours',
     type: Number,
   })
   public uptime: number
